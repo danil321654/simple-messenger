@@ -27,10 +27,9 @@ router.post("/register", (req, res) => {
       username: req.body.username,
       password: req.body.password
     });
-    // save the user
+    
     newUser.save(function(err) {
       if (err) {
-        //  console.log(err);
         return res.json({success: false, msg: "Error while creating a user"});
       }
       res.json({success: true, msg: "Successful created new user."});
@@ -52,12 +51,9 @@ router.post("/login", (req, res) => {
           msg: "Authentication failed. User not found."
         });
       } else {
-        // check if password matches
         user.comparePassword(req.body.password, function(err, isMatch) {
           if (isMatch && !err) {
-            // if user is found and password is right create a token
             let token = jwt.sign(user.toJSON(), process.env.secret);
-            // return the information including token as JSON
             res.json({success: true, token: "Bearer " + token});
           } else {
             console.log(err);
