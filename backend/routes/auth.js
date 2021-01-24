@@ -23,14 +23,13 @@ router.post("/register", (req, res) => {
   } else {
     let newUser = new User({
       name: req.body.name,
-      email: req.body.email,
       username: req.body.username,
       password: req.body.password
     });
-    
+
     newUser.save(function(err) {
       if (err) {
-        return res.json({success: false, msg: "Error while creating a user"});
+        return res.status(401).send({success: false, msg: "Error while creating a user"});
       }
       res.json({success: true, msg: "Successful created new user."});
     });

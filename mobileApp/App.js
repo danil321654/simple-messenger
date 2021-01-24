@@ -2,24 +2,28 @@ import {StatusBar} from "expo-status-bar";
 import React, {useState, useEffect} from "react";
 import axios from "axios";
 import {StyleSheet, Text, View} from "react-native";
-import cfg from "./src/cfg/config.js";
+import {Provider} from "react-redux";
+import {NavigationContainer} from "@react-navigation/native";
+import {createStackNavigator} from "@react-navigation/stack";
+import Authorization from "./src/screens/Authorization";
+import store from "./src/store.js";
+import cfg from "./src/config.js";
+
+const Stack = createStackNavigator();
 
 export default function App() {
-  const [text, setText] = useState("no");
-  useEffect(() => {
-    const eff = () =>
-      axios
-        .get(`${cfg.ip}/home`)
-        .then(resp => setText(resp.data))
-        .catch(err => console.log(err.message));
-
-    eff();
-  }, []);
   return (
-    <View style={styles.container}>
-      <Text>{text}</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Provider store={store}>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false
+          }}
+        >
+          <Stack.Screen name="Authorization" component={Authorization} />
+        </Stack.Navigator>
+      </Provider>
+    </NavigationContainer>
   );
 }
 
