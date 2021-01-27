@@ -5,17 +5,6 @@ const passport = require("passport");
 const User = require("../models/user");
 require("dotenv").config();
 
-router.get(
-  "/protected",
-  passport.authenticate("jwt", {session: false}),
-  (req, res, next) => {
-    res.status(200).json({
-      success: true,
-      msg: "You are successfully authenticated to this route!"
-    });
-  }
-);
-
 router.post("/register", (req, res) => {
   console.log(req.body);
   if (!req.body.username || !req.body.password) {
@@ -29,7 +18,10 @@ router.post("/register", (req, res) => {
 
     newUser.save(function(err) {
       if (err) {
-        return res.status(401).send({success: false, msg: "Error while creating a user"});
+        console.log(err);
+        return res
+          .status(401)
+          .send({success: false, msg: "Error while creating a user"});
       }
       res.json({success: true, msg: "Successful created new user."});
     });
@@ -58,7 +50,7 @@ router.post("/login", (req, res) => {
             console.log(err);
             res.status(401).send({
               success: false,
-              msg: "Authentication failed. Wrong password."
+              msg: "Authentication failed."
             });
           }
         });
@@ -66,5 +58,12 @@ router.post("/login", (req, res) => {
     }
   );
 });
+router.get(
+  "/logged_in",
+  passport.authenticate("jwt", {session: false}),
+  (req, res) => {
+    res.send({success: true});
+  }
+);
 
 module.exports = router;
