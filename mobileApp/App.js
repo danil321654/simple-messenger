@@ -5,7 +5,7 @@ import {StyleSheet, Text, View} from "react-native";
 import {Provider} from "react-redux";
 import {NavigationContainer} from "@react-navigation/native";
 import {createStackNavigator} from "@react-navigation/stack";
-import Authorization from "./src/screens/Authorization";
+import Container from "./src/Container";
 import store from "./src/store.js";
 import cfg from "./src/config.js";
 
@@ -15,13 +15,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Provider store={store}>
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false
-          }}
-        >
-          <Stack.Screen name="Authorization" component={Authorization} />
-        </Stack.Navigator>
+        <Container />
       </Provider>
     </NavigationContainer>
   );

@@ -25,7 +25,7 @@ export const login = user => {
     try {
       const response = await axios.post(`${cfg.ip}/login`, user);
       console.log(response.data);
-      return onSuccess(response);
+      return onSuccess(response.data);
     } catch (err) {
       return onError(err);
     }

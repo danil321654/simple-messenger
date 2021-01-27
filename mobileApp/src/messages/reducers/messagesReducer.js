@@ -1,9 +1,9 @@
-export const authReducer = (
+export const messagesReducer = (
   state = {user: {}, authMessage: "", token: undefined},
   action
 ) => {
   switch (action.type) {
-    case "LOGIN_SUCCESS":
+    case "MESSAGE_SEND_SUCCESS":
       return {
         ...state,
         user: action.payload.user,
@@ -11,7 +11,7 @@ export const authReducer = (
         authMessage: "logged"
       };
       break;
-    case "LOGIN_ERROR":
+    case "MESSAGE_SEND_ERROR":
       return {
         ...state,
         user: {},

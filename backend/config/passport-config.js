@@ -9,13 +9,13 @@ const applyPassportStrategy = passport => {
   passport.use(
     new Strategy(options, (payload, done) => {
       console.log(payload);
-      User.findOne({email: payload.email}, (err, user) => {
+      User.findOne({username: payload.username}, (err, user) => {
         if (err) {
           return done(err, false);
         }
         if (user) {
           return done(null, {
-            email: user.email,
+            username: user.username,
             _id: user["_id"]
           });
         }

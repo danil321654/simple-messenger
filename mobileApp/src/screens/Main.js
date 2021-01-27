@@ -4,21 +4,34 @@ import axios from "axios";
 import {StyleSheet, Text, View} from "react-native";
 import {createStackNavigator} from "@react-navigation/stack";
 import {connect} from "react-redux";
-import Login from "./../auth/components/Login";
-import Register from "./../auth/components/Register";
+import Dialogs from "./../messages/components/Dialogs";
 import cfg from "../config.js";
 
 const Stack = createStackNavigator();
 
-function Authorization({navigation, auth}) {
+function Main({navigation, auth}) {
+  /*useEffect(
+    () =>
+      navigation.addListener("beforeRemove", e => {
+        e.preventDefault();
+        axios
+          .get(`${cfg.ip}/protected`, {
+            headers: {Authorization: auth.token}
+          })
+          .then(resp =>
+            navigation.navigate(resp.data.success ? "Main" : "Authorization")
+          )
+          .catch(() => navigation.navigate("Authorization"));
+      }),
+    [navigation]
+  );*/
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false
       }}
     >
-      <Stack.Screen name="Register" component={Register} />
-      <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="Dialogs" component={Dialogs} />
     </Stack.Navigator>
   );
 }
@@ -38,4 +51,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps, null)(Authorization);
+export default connect(mapStateToProps, null)(Main);

@@ -12,10 +12,15 @@ import {
 import cfg from "../../config.js";
 import {register} from "../actions/register.js";
 
-function Register({navigation, register}) {
+function Register({navigation, auth, register}) {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    if (auth.authMessage == "registered") navigation.navigate("Login");
+  }, [auth]);
+
   return (
     <View style={styles.container}>
       <Text>Register</Text>
@@ -72,8 +77,13 @@ const styles = StyleSheet.create({
   }
 });
 
+const mapStateToProps = state => {
+  return {
+    auth: state.auth
+  };
+};
 const mapDispatchToProps = {
   register: register
 };
 
-export default connect(null, mapDispatchToProps)(Register);
+export default connect(mapStateToProps, mapDispatchToProps)(Register);
