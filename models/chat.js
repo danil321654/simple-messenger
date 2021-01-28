@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const dialogSchema = new Schema({
+const chatSchema = new Schema({
   name: {
     type: String,
     required: true
@@ -14,11 +14,11 @@ const dialogSchema = new Schema({
 
 
 
-dialogSchema.pre("find", function(next) {
-  this.populate("dialog").populate("user");
+chatSchema.pre("find", function(next) {
+  this.populate("chat").populate("user");
   next();
 });
 
 
 
-module.exports = mongoose.model("dialogs", dialogSchema);
+module.exports = mongoose.model("chats", chatSchema);

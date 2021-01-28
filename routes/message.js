@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
-const DialogUser = require("../models/dialogUser");
+const ChatUser = require("../models/chatUser");
 const Message = require("../models/message");
-const Dialog = require("../models/dialog");
+const Chat = require("../models/chat");
 const User = require("../models/user");
 require("dotenv").config();
 
@@ -12,59 +12,69 @@ router.post(
   "/message",
   passport.authenticate("jwt", {session: false}),
   async (req, res, next) => {
-    if (!req.body.user || !req.body.dialog)
-      return res.send(401).send("unauthorized");
+    if (!req.user || !req.body.chat) return res.send(401).send("unauthorized");
 
     let userMes = await User.findOne({
-      username: req.body.user.username
+      username: req.user.username
     });
 
-    let users = await User.find({
-      username: req.body.users.map(el => el.username)
-    });
-
-    let dialog = await Dialog.findOne({
-      name: req.body.dialog.name
+    let chat = await Chat.findOne({
+      name: req.body.chat.name
     });
 
     if (!userMes) return res.send(401).send("error");
-
-    if (!dialog) {
-      dialog = new Dialog({
-        name: req.body.dialog.name
+    let chatUser;
+    if (!chat) {
+      let users = await User.find({
+        username: req.body.users.map(el => el.username)
+      });
+      chat = new Chat({
+        name: req.body.chat.name
       });
       try {
-        dialog = await dialog.save();
+        chat = await chat.save();
+      } catch (e) {
+        res.send(401).send("no permission");
+      }
+
+      Promise.all(
+        users.map(async user => {
+          chatUser = await ChatUser.findOne({
+            user: user["_id"],
+            chat: chat["_id"]
+          });
+          if (!chatUser) {
+            chatUser = new ChatUser({
+              user: user["_id"],
+              chat: chat["_id"]
+            });
+            try {
+              chatUser = await chatUser.save();
+            } catch (e) {
+              res.send(401).send("no permission");
+            }
+          }
+          return user;
+        })
+      );
+    }
+    chatUser = await ChatUser.findOne({
+      user: userMes["_id"],
+      chat: chat["_id"]
+    });
+    if (!chatUser) {
+      chatUser = new ChatUser({
+        user: userMes["_id"],
+        chat: chat["_id"]
+      });
+      try {
+        chatUser = await chatUser.save();
       } catch (e) {
         res.send(401).send("no permission");
       }
     }
-    Promise.all(
-      users.map(async user => {
-        let dialogUser = await DialogUser.findOne({
-          user: user["_id"],
-          dialog: dialog["_id"]
-        });
-        if (!dialogUser) {
-          dialogUser = new DialogUser({
-            user: user["_id"],
-            dialog: dialog["_id"]
-          });
-          try {
-            dialogUser = await dialogUser.save();
-          } catch (e) {
-            res.send(401).send("no permission");
-          }
-        }
-        return user;
-      })
-    );
-    let dialogUser = await DialogUser.findOne({
-      user: userMes["_id"],
-      dialog: dialog["_id"]
-    });
     let newMessage = new Message({
-      dialogUser: dialogUser["_id"],
+      chatUser: chatUser["_id"],
       text: req.body.message.text
     });
     try {
