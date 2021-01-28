@@ -4,7 +4,8 @@ import axios from "axios";
 import {StyleSheet, Text, View} from "react-native";
 import {createStackNavigator} from "@react-navigation/stack";
 import {connect} from "react-redux";
-import Dialogs from "./../messages/components/Dialogs";
+import Chats from "./../messages/components/Chats";
+import SingleChat from "./../messages/components/SingleChat";
 import cfg from "../config.js";
 
 const Stack = createStackNavigator();
@@ -31,7 +32,8 @@ function Main({navigation, auth}) {
         headerShown: false
       }}
     >
-      <Stack.Screen name="Dialogs" component={Dialogs} />
+      <Stack.Screen name="Chats" component={Chats} />
+      <Stack.Screen name="SingleChat" component={SingleChat} />
     </Stack.Navigator>
   );
 }
@@ -40,7 +42,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    alignItems: "center",
+    alignItems: "stretch",
     justifyContent: "center"
   }
 });

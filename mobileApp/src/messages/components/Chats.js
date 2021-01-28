@@ -10,13 +10,14 @@ import {
   TouchableOpacity
 } from "react-native";
 import axios from "axios";
+import ChatPreview from "./ChatPreview";
 import cfg from "../../config.js";
 
-function Dialogs({navigation, state}) {
+function Chats({navigation, state}) {
   const [mesArray, setMesArray] = useState([]);
   useEffect(() => {
     axios
-      .get(`${cfg.ip}/dialogs`, {
+      .get(`${cfg.ip}/chats`, {
         headers: {Authorization: state.auth.token}
       })
       .then(resp => setMesArray(resp.data));
@@ -24,15 +25,16 @@ function Dialogs({navigation, state}) {
 
   return (
     <View style={styles.container}>
-      {mesArray.map((dialog, i) => (
-        <View key={i}>
-          <Text>{dialog.name}</Text>
-          <View>
-            <Text>
-              {`${dialog.lastMessage.dialogUser.user.name} - ${dialog.lastMessage.text}`}
-            </Text>
-          </View>
-        </View>
+      {mesArray.map((chat, i) => (
+        <TouchableOpacity
+          key={i}
+          onPress={() => navigation.navigate("SingleChat", {chat: chat})}
+        >
+          <ChatPreview chat={chat} />
+        </TouchableOpacity>
+      ))}
+      {mesArray.map((chat, i) => (
+        <ChatPreview key={i * 2} chat={chat} />
       ))}
     </View>
   );
@@ -44,7 +46,7 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: "column",
     backgroundColor: "#fff",
-    alignItems: "center",
+    alignItems: "stretch",
     justifyContent: "flex-start"
   },
   input: {
@@ -67,4 +69,4 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = {};
 
-export default connect(mapStateToProps, null)(Dialogs);
+export default connect(mapStateToProps, null)(Chats);

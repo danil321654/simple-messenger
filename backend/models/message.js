@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const messageSchema = new Schema({
-  dialogUser: {
+  chatUser: {
     type: Schema.Types.ObjectId,
-    ref: "dialogUsers",
+    ref: "chatUsers",
     required: true
   },
   text: {
@@ -17,7 +17,7 @@ const messageSchema = new Schema({
 });
 
 messageSchema.pre("find", function(next) {
-  this.populate("dialogUser");
+  this.populate("chatUser");
   next();
 });
 

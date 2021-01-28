@@ -1,22 +1,22 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const dialogUserSchema = new Schema({
+const chatUserSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "users",
     required: true
   },
-  dialog: {
+  chat: {
     type: Schema.Types.ObjectId,
-    ref: "dialogs",
+    ref: "chats",
     required: true
   }
 });
 
-dialogUserSchema.pre("find", function(next) {
-  this.populate("dialog").populate("user");
+chatUserSchema.pre("find", function(next) {
+  this.populate("user").populate("chat");
   next();
 });
 
-module.exports = mongoose.model("dialogUsers", dialogUserSchema);
+module.exports = mongoose.model("chatUsers", chatUserSchema);
