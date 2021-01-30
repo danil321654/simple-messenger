@@ -30,7 +30,7 @@ router.get(
 
     let chats = [];
     if (!chatUser.length || chatUser.length < 1) {
-      return res.send("empty");
+      return res.send([]);
     }
 
     chats = [...new Set(chatUser.map(chat => chat.chat))];
@@ -60,15 +60,15 @@ router.get(
         lastMessage: lastMessage
       };
     });
-    return res.send(newChats);
+    return res.send(newChats.length ? newChats : []);
   }
 );
 
-router.post(
+router.get(
   "/chat",
   passport.authenticate("jwt", {session: false}),
   async (req, res, next) => {
-    console.log(req.body);
+    console.log(req.query);
     if (!req.user) return res.send(401);
 
     let user = await User.findOne({
@@ -80,7 +80,7 @@ router.post(
 
     try {
       chat = await Chat.findOne({
-        name: req.body.chat.name
+        name: JSON.parse(req.query.chat).name
       });
       chatUser = await ChatUser.find({
         user: user["_id"],
@@ -122,6 +122,77 @@ router.post(
       };
     });
     return res.send(newChats[0]);
+  }
+);
+
+router.post(
+  "/chat",
+  passport.authenticate("jwt", {session: false}),
+  async (req, res, next) => {
+    if (!req.user) return res.send(401).send("unauthorized");
+
+    console.log(req.body);
+
+    let userMes = await User.findOne({
+      username: req.user.username
+    });
+
+    let chat = await Chat.findOne({
+      name: req.body.name
+    });
+
+    if (!userMes) return res.send(401).send("error");
+    let chatUser;
+    if (!chat) {
+      let users = await User.find({
+        username: req.body.users.map(el => el.username)
+      });
+      chat = new Chat({
+        name: req.body.name
+      });
+      try {
+        chat = await chat.save();
+      } catch (e) {
+        res.send(401).send("no permission");
+      }
+
+      Promise.all(
+        users.map(async user => {
+          chatUser = await ChatUser.findOne({
+            user: user["_id"],
+            chat: chat["_id"]
+          });
+          if (!chatUser) {
+            chatUser = new ChatUser({
+              user: user["_id"],
+              chat: chat["_id"]
+            });
+            try {
+              chatUser = await chatUser.save();
+            } catch (e) {
+              res.send(401).send("no permission");
+            }
+          }
+          return user;
+        })
+      );
+    }
+    chatUser = await ChatUser.findOne({
+      user: userMes["_id"],
+      chat: chat["_id"]
+    });
+    if (!chatUser) {
+      chatUser = new ChatUser({
+        user: userMes["_id"],
+        chat: chat["_id"]
+      });
+      try {
+        chatUser = await chatUser.save();
+      } catch (e) {
+        res.send(401).send("no permission");
+      }
+    }
+    res.send("chat added");
   }
 );
 
