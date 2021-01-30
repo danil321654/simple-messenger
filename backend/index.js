@@ -1,4 +1,6 @@
+const http = require("http");
 const express = require("express");
+const socketio = require("socket.io");
 const cors = require("cors");
 const passport = require("passport");
 const passportConfig = require("./config/passport-config");
@@ -9,13 +11,25 @@ passportConfig(passport);
 passport.initialize();
 
 const app = express();
+const server = http.createServer(app);
+const io = socketio(server);
 
 app.use(express.json());
 app.use(cors());
 app.use(routes);
 
-app.get("/", (req, res) => {
-  res.send("//");
-});
+server.listen(3003);
 
-app.listen(3003);
+io.on("connection", socket => {
+  socket.on("join", (chat, callback) => {
+    socket.join(chat.name);
+    callback();
+  });
+
+  socket.on("sendMessage", (message, callback) => {
+    io.to(message.chat.name).emit("message");
+    callback();
+  });
+
+  socket.on("disconnect", () => {});
+});

@@ -62,17 +62,19 @@ function ChatPreview({navigation, state, chat}) {
       </View>
       <View style={styles.message}>
         <Text style={styles.messageName}>{chat.name}</Text>
-        <View>
-          <Text>{`${chat.lastMessage.text}`}</Text>
-          <View style={styles.footer}>
-            <Text
-              style={styles.author}
-            >{`${chat.lastMessage.chatUser.user.name}`}</Text>
-            <Text
-              style={styles.date}
-            >{`${chat.lastMessage.createdDate}`}</Text>
+        {chat.lastMessage && (
+          <View>
+            <Text>{`${chat.lastMessage.text}`}</Text>
+            <View style={styles.footer}>
+              <Text
+                style={styles.author}
+              >{`${chat.lastMessage.chatUser.user.name}`}</Text>
+              <Text
+                style={styles.date}
+              >{`${chat.lastMessage.createdDate}`}</Text>
+            </View>
           </View>
-        </View>
+        )}
       </View>
     </View>
   );

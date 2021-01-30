@@ -6,26 +6,12 @@ import {createStackNavigator} from "@react-navigation/stack";
 import {connect} from "react-redux";
 import Chats from "./../messages/components/Chats";
 import SingleChat from "./../messages/components/SingleChat";
+import CreateNewChat from "./../messages/components/CreateNewChat";
 import cfg from "../config.js";
 
 const Stack = createStackNavigator();
 
 function Main({navigation, auth}) {
-  /*useEffect(
-    () =>
-      navigation.addListener("beforeRemove", e => {
-        e.preventDefault();
-        axios
-          .get(`${cfg.ip}/protected`, {
-            headers: {Authorization: auth.token}
-          })
-          .then(resp =>
-            navigation.navigate(resp.data.success ? "Main" : "Authorization")
-          )
-          .catch(() => navigation.navigate("Authorization"));
-      }),
-    [navigation]
-  );*/
   return (
     <Stack.Navigator
       screenOptions={{
@@ -34,6 +20,7 @@ function Main({navigation, auth}) {
     >
       <Stack.Screen name="Chats" component={Chats} />
       <Stack.Screen name="SingleChat" component={SingleChat} />
+      <Stack.Screen name="CreateNewChat" component={CreateNewChat} />
     </Stack.Navigator>
   );
 }

@@ -81,7 +81,7 @@ router.post(
       newMessage = await newMessage.save();
       res.send("message complete");
     } catch (e) {
-      res.send(401).send("no permission");
+      res.send(401);
     }
   }
 );

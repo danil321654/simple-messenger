@@ -7,7 +7,8 @@ import {
   TextInput,
   View,
   Button,
-  TouchableOpacity
+  TouchableOpacity,
+  ScrollView
 } from "react-native";
 import axios from "axios";
 import ChatPreview from "./ChatPreview";
@@ -20,22 +21,30 @@ function Chats({navigation, state}) {
       .get(`${cfg.ip}/chats`, {
         headers: {Authorization: state.auth.token}
       })
-      .then(resp => setMesArray(resp.data));
+      .then(resp => {
+        setMesArray(resp.data);
+      });
   }, [state]);
 
   return (
     <View style={styles.container}>
-      {mesArray.map((chat, i) => (
-        <TouchableOpacity
-          key={i}
-          onPress={() => navigation.navigate("SingleChat", {chat: chat})}
-        >
-          <ChatPreview chat={chat} />
-        </TouchableOpacity>
-      ))}
-      {mesArray.map((chat, i) => (
-        <ChatPreview key={i * 2} chat={chat} />
-      ))}
+      <ScrollView>
+        {mesArray.length > 0 &&
+          mesArray.map((chat, i) => (
+            <TouchableOpacity
+              key={i}
+              onPress={() => navigation.navigate("SingleChat", {chat: chat})}
+            >
+              <ChatPreview chat={chat} />
+            </TouchableOpacity>
+          ))}
+      </ScrollView>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate("CreateNewChat")}
+      >
+        <Text style={styles.buttonText}>+</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -49,10 +58,22 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     justifyContent: "flex-start"
   },
-  input: {
-    fontSize: 20,
-    height: 60,
-    width: 250
+  addButton: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    alignSelf: "flex-end",
+    minWidth: 40,
+    minHeight: 40,
+
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+    borderColor: "rgba(0, 0, 0, 0.68)",
+    borderWidth: 2
+  },
+  buttonText: {
+    fontSize: 20
   },
   hidButton: {
     backgroundColor: "rgba(0,0,0,0)",
