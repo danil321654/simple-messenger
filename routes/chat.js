@@ -145,7 +145,7 @@ router.post(
     let chatUser;
     if (!chat) {
       let users = await User.find({
-        username: req.body.users.map(el => el.username)
+        username: req.body.users
       });
       chat = new Chat({
         name: req.body.name
@@ -156,12 +156,14 @@ router.post(
         res.send(401).send("no permission");
       }
 
+      console.log("here4");
       Promise.all(
         users.map(async user => {
           chatUser = await ChatUser.findOne({
             user: user["_id"],
             chat: chat["_id"]
           });
+          console.log("here5");
           if (!chatUser) {
             chatUser = new ChatUser({
               user: user["_id"],
@@ -177,6 +179,8 @@ router.post(
         })
       );
     }
+
+    console.log("here6");
     chatUser = await ChatUser.findOne({
       user: userMes["_id"],
       chat: chat["_id"]
