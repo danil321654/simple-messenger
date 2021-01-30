@@ -11,12 +11,15 @@ import {
   ScrollView
 } from "react-native";
 import axios from "axios";
+import io from "socket.io-client";
 import ChatPreview from "./ChatPreview";
 import cfg from "../../config.js";
 
+let socket;
+
 function Chats({navigation, state}) {
   const [mesArray, setMesArray] = useState([]);
-  useEffect(() => {
+  const getChats = () => {
     axios
       .get(`${cfg.ip}/chats`, {
         headers: {Authorization: state.auth.token}
@@ -24,6 +27,17 @@ function Chats({navigation, state}) {
       .then(resp => {
         setMesArray(resp.data);
       });
+  };
+  useEffect(() => {
+    getChats();
+    socket = io(cfg.ip);
+    mesArray.map((chat, i) => {
+      socket.emit("join", chat, error => {
+        console.log(error);
+      });
+    });
+
+    socket.on("message", () => getChats());
   }, [state]);
 
   return (
