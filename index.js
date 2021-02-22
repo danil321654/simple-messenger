@@ -3,6 +3,7 @@ const express = require("express");
 const socketio = require("socket.io");
 const cors = require("cors");
 const passport = require("passport");
+require("dotenv").config();
 const passportConfig = require("./config/passport-config");
 const db = require("./config/db");
 const routes = require("./routes/index");
@@ -18,7 +19,7 @@ app.use(express.json());
 app.use(cors());
 app.use(routes);
 
-server.listen(3003);
+server.listen(process.env.port || 3000);
 
 io.on("connection", socket => {
   socket.on("join", (chat, callback) => {
