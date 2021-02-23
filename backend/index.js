@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(cors());
 app.use(routes);
 
-server.listen(process.env.PORT || 3000);
+server.listen(3000);
 
 io.on("connection", socket => {
   socket.on("join", (chat, callback) => {

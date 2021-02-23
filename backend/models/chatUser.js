@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Message = require("./message");
 const Schema = mongoose.Schema;
 
 const chatUserSchema = new Schema({
@@ -16,6 +17,13 @@ const chatUserSchema = new Schema({
 
 chatUserSchema.pre("find", function(next) {
   this.populate("user").populate("chat");
+  next();
+});
+
+chatUserSchema.pre(/delete/, async function(next) {
+  const message = await Message.deleteMany({
+    "chatUser._id": this.getQuery()._id
+  });
   next();
 });
 
