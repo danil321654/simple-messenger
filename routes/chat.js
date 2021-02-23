@@ -200,4 +200,29 @@ router.post(
   }
 );
 
+router.post(
+  "/deleteChat",
+  passport.authenticate("jwt", {session: false}),
+  async (req, res, next) => {
+    if (!req.user) return res.send(401).send("unauthorized");
+
+    console.log(req.body);
+
+    let userMes = await User.findOne({
+      username: req.user.username
+    });
+
+    let chat;
+
+    try {
+      chat = await Chat.deleteOne({
+        name: req.body.name
+      });
+    } catch (e) {
+      return res.send(401).send("no chat");
+    }
+    return res.send("chat removed");
+  }
+);
+
 module.exports = router;
